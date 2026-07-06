@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>competition test bank</title>
+    <style>
+        /* ========== 100% 还原您原来的所有现代柔和渐变样式 ========== */
+        :root {
+            --primary: #4776E6;
+            --primary-gradient: linear-gradient(135deg, #8E54E9 0%, #4776E6 100%);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --border: #e2e8f0;
+            --text: #334155;
+            --star-gold: #f59e0b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: var(--bg-gradient);
+            margin: 0; 
+            padding: 18px; 
+            display: flex; 
+            gap: 18px; 
+            height: 100vh; 
+            height: 100dvh; 
+            overflow: hidden; 
+            user-select: none;
+            color: var(--text);
+        }
+
+        .sidebar-mask {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px); z-index: 998;
+        }
+        .sidebar-mask.show { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sidebar {
+            width: 330px; 
+            background: var(--card-bg); 
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.6);
+            overflow-y: auto; 
+            padding: 22px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+        }
+        .sidebar.hide-pc { margin-left: -350px; opacity: 0; pointer-events: none; }
+        .sidebar h3 { margin: 0; font-size: 18px; color: #1e293b; display: flex; align-items: center; gap: 8px;}
+        
+        .score-board {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px; padding: 16px; border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); text-align: center;
+        }
+        .score-board .score-title { font-size: 12px; color: #64748b; font-weight: bold; margin-bottom: 4px; }
+        .score-board .score-number { font-size: 38px; font-weight: 900; color: transparent; background-clip: text; background-image: var(--primary-gradient); -webkit-background-clip: text; line-height: 1; }
+        .score-board .score-max { font-size: 14px; color: #94a3b8; font-weight: bold; }
+        
+        .progress-container { margin-top: 10px; }
+        .progress-text { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 6px; }
+        .progress-bar { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+        .progress-inner { height: 100%; background: var(--primary-gradient); width: 0%; transition: width 0.4s ease; }
+
+        .sidebar .stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+        .sidebar .stat-badge {
+            flex: 1; min-width: 60px; text-align: center; padding: 10px 6px;
+            border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer;
+            transition: all 0.3s ease; border: 2px solid transparent; background: #f1f5f9; color: #64748b;
+        }
+        .stat-badge.active-filter { border-color: var(--primary); background: #eff6ff; color: var(--primary); box-shadow: 0 4px 12px rgba(71,118,230,0.2); }
+        .stat-badge.wrongbook-badge { background: #fff7ed; color: #ea580c; }
+        .stat-badge.wrongbook-badge.active-filter { border-color: #ea580c; background: #fff7ed; box-shadow: 0 4px 12px rgba(234,88,12,0.2); }
+        .stat-badge .count { font-size: 20px; display: block; line-height: 1.2; margin-bottom: 2px;}
+
+        /* ========== 调整导航栏：支持4个Tab标签页适应性缩放 ========== */
+        .type-tabs { display: flex; background: #f1f5f9; border-radius: 12px; padding: 4px; margin-top: 2px; gap: 2px; }
+        .type-tab { flex: 1; text-align: center; padding: 8px 2px; font-size: 12px; font-weight: bold; color: #64748b; border-radius: 8px; cursor: pointer; transition: all 0.3s; white-space: nowrap;}
+        .type-tab.active { background: #fff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .tab-count { font-size: 11px; background: #cbd5e1; color: #fff; padding: 2px 4px; border-radius: 10px; line-height: 1; }
+        .type-tab.active .tab-count { background: var(--primary); }
+        
+        .sidebar .actions-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px;}
+        .sidebar .btn-sm {
+            flex: 1; padding: 10px 4px; border: 1px solid #e2e8f0; border-radius: 10px;
+            cursor: pointer; font-size: 13px; background: #fff; transition: all 0.2s; text-align: center; color: #475569; font-weight: bold;
+        }
+        .btn-sm.danger { color: var(--danger); border-color: #fecaca; background: #fef2f2;}
+
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 10px; margin-top: 8px;}
+        .grid-item {
+            padding: 8px 0; text-align: center; background: #f8fafc;
+            border: 2px solid transparent; border-radius: 8px; cursor: pointer;
+            font-size: 13px; transition: all 0.2s; position: relative; color: #64748b; font-weight: 600;
+        }
+        .grid-item.active { background: var(--primary-gradient); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(71,118,230,0.35); }
+        .grid-item.done { background: #ecfdf5; border-color: #a7f3d0; color: #059669; }
+        .grid-item.in-wrongbook::after { content: '⭐'; position: absolute; top: -5px; right: -4px; font-size: 10px; }
+
+        .main-content { 
+            flex: 1; padding: 0; overflow-y: auto; border-radius: 20px;
+            display: flex; justify-content: center; align-items: flex-start;
+        }
+        
+        .app-container {
+            background: var(--card-bg); width: 100%; max-width: 800px; padding: 40px 45px;
+            border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.6);
+            margin-bottom: 20px; position: relative;
+        }
+        
+        .question-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;}
+        .menu-btn { background: var(--primary-gradient); color: #fff; border: none; border-radius: 50px; padding: 8px 18px; font-size: 15px; font-weight: bold; cursor: pointer; }
+
+        .star-btn {
+            flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%; border: 2px solid #cbd5e1;
+            background: #fff; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center;
+        }
+        .star-btn.starred { border-color: var(--star-gold); background: #fef3c7; }
+        
+        #questionText { font-size: 20px; font-weight: 800; margin-bottom: 22px; line-height: 1.6; color: #1e293b;}
+        
+        .option {
+            border: 2px solid #f1f5f9; border-radius: 12px; padding: 15px 20px; margin-bottom: 12px;
+            cursor: pointer; transition: all 0.2s ease; font-size: 16px; background: #f8fafc; color: #475569;
+        }
+        .option.selected { border-color: var(--primary); background-color: #eff6ff; }
+        
+        /* 对错框显色逻辑样式 */
+        .option.correct { border-color: var(--success) !important; background-color: #ecfdf5 !important; color: #065f46 !important; font-weight: bold; }
+        .option.wrong { border-color: var(--danger) !important; background-color: #fef2f2 !important; color: #991b1b !important; }
+
+        /* ========== 简答题专用新样式 ========== */
+        .short-answer-container textarea {
+            width: 100%;
+            height: 130px;
+            padding: 14px;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+            color: #334155;
+        }
+        .short-answer-container textarea:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(71, 118, 230, 0.15);
+        }
+        .user-answer-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+        }
+        .self-grade-container {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 12px; cursor: pointer; color: white; font-weight: bold; font-size: 15px; }
+        .btn-primary { background: var(--primary-gradient); }
+        .btn-warning { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .btn-gray { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); }
+        .btn-submit-early { background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%); } 
+
+        .explanation { margin-top: 25px; padding: 20px; background: #f0fdf4; border-left: 6px solid var(--success); border-radius: 10px; display: none; }
+
+        .overlay-bg {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px);
+            z-index: 1000; justify-content: center; align-items: center;
+        }
+        .overlay-bg.show { display: flex; animation: fadeIn 0.3s; }
+        .modal-card {
+            background: var(--card-bg); border-radius: 24px; padding: 40px; text-align: center;
+            max-width: 480px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.2); 
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        
+        /* 导出弹窗特定样式 */
+        .export-box { text-align: left; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0; }
+        .export-box label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--text); }
+        .export-box select, .export-box input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 10px; }
+
+        /* 激励语 */
+        #encouragementText { font-style: italic; color: var(--primary); font-weight: bold; margin: 10px 0; min-height: 1.5em; }
+
+        @media (max-width: 768px) {
+            body { padding: 0; gap: 0; }
+            .sidebar { position: fixed; left: -320px; top: 0; height: 100dvh; }
+            .sidebar.show-mobile { left: 0; }
+            .app-container { padding: 20px 15px; }
+            .btn { flex: 1 1 calc(50% - 10px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar-mask" id="sidebarMask" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+    <h3>📋 题库导航</h3>
+    
+    <div class="score-board">
+        <div class="score-title">💯 百分制实时得分</div>
+        <div>
+            <span class="score-number" id="realtimeScore">0.0</span>
+            <span class="score-max"> / 100</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-text"><span>答题进度</span><span id="progressText">0 / 0</span></div>
+            <div class="progress-bar"><div class="progress-inner" id="progressBarInner"></div></div>
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-badge active-filter" id="btnSource-all" onclick="setSourceFilter('all')">
+            <span class="count" id="totalCount">0</span>全部
+        </div>
+        <div class="stat-badge wrongbook-badge" id="btnSource-wrongbook" onclick="setSourceFilter('wrongbook')">
+            <span class="count" id="wrongCount">0</span>⭐错题
+        </div>
+    </div>
+    
+    <!-- ========== 新增简答题 Tab ========== -->
+    <div class="type-tabs">
+        <div class="type-tab active" id="tab-single" onclick="setTypeFilter('single')">单选 <span id="count-single">0</span></div>
+        <div class="type-tab" id="tab-multi" onclick="setTypeFilter('multi')">多选 <span id="count-multi">0</span></div>
+        <div class="type-tab" id="tab-judge" onclick="setTypeFilter('judge')">判断 <span id="count-judge">0</span></div>
+        <div class="type-tab" id="tab-short" onclick="setTypeFilter('short')">简答 <span id="count-short">0</span></div>
+    </div>
+    
+    <div class="actions-row">
+        <button class="btn-sm" id="modeToggleBtn" onclick="toggleReciteMode()" style="flex: 1 1 100%; border-color: var(--primary); color: var(--primary);">📖 开启背题模式</button>
+        <button class="btn-sm" style="color:var(--success); border-color:#a7f3d0;" onclick="openExportModal()">📤 灵活导出</button>
+        <button class="btn-sm" onclick="showInstructions()" style="background: #fffbeb; color: #d97706;">💡 使用说明</button>
+        <button class="btn-sm danger" onclick="clearWrongBook()">🗑 清空</button>
+        <button class="btn-sm" onclick="resetProgress()">🔄 重置</button>
+    </div>
+    
+    <div id="navGrid" style="flex: 1; overflow-y: auto;"></div>
+</div>
+
+<div class="main-content">
+    <div class="app-container">
+        <div class="question-header">
+            <button class="menu-btn" onclick="toggleSidebar()">☰ 题库导航</button>
+            <button class="star-btn" id="starBtn" onclick="toggleStar()">☆</button>
+            <div style="flex:1;"><div id="typeLabel" class="type-tag" style="margin-left:10px; font-weight:900;"></div></div>
+        </div>
+        
+        <div id="questionText"></div>
+        <div id="optionsContainer"></div>
+        <div id="multiSelectHint" style="display:none; color:red; font-size:14px; text-align:center; padding:10px;">⚠️ 多选题：选完后请点击「✅ 提交答案」</div>
+
+        <div class="btn-row">
+            <button class="btn btn-primary" id="submitBtn" onclick="checkAnswer()">✅ 提交答案</button>
+            <button class="btn btn-warning" id="showAnswerBtn" onclick="showExplanationDirectly()">👁 查看答案</button>
+            <button class="btn btn-gray" onclick="prevQuestion()">⬅ 上一题</button>
+            <button class="btn btn-gray" onclick="nextQuestion()">下一题 ➡</button>
+            <button class="btn btn-submit-early" style="flex: 1 1 100%" onclick="submitEarly()">📊 提前交卷</button>
+        </div>
+
+        <div class="explanation" id="explanationBox">
+            <div class="result-title" id="resultTitle" style="font-weight:900; font-size:18px; margin-bottom:10px;"></div>
+            <div id="expText"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 1. 导出中心弹窗 -->
+<div class="overlay-bg" id="exportOverlay" onclick="if(event.target===this) closeExportModal()">
+    <div class="modal-card">
+        <h2 style="color: var(--primary);">📤 导出中心</h2>
+        <div class="export-box">
+            <label>选择导出范围：</label>
+            <select id="exportScope" onchange="toggleExportRange()">
+                <option value="all">全部题目 (含所有题型)</option>
+                <option value="wrongbook">仅导出错题本</option>
+                <option value="custom">自定义题号范围</option>
+            </select>
+            <div id="customRangeGroup" style="display:none;">
+                <label>输入范围 (如 1-50):</label>
+                <input type="text" id="customRangeInput" placeholder="例如: 1-100">
+            </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="handleExport()">💾 生成 TXT 并下载</button>
+        <button class="btn btn-gray" style="width:100%; margin-top:10px;" onclick="closeExportModal()">取消</button>
+    </div>
+</div>
+
+<!-- 2. 结算弹窗 -->
+<div class="overlay-bg" id="completionOverlay">
+    <div class="modal-card">
+        <h2 id="modalTitle">🎉 答题结束</h2>
+        <div id="encouragementText"></div> <!-- 激励语 -->
+        
+        <div style="background: #f8fafc; border-radius: 16px; padding: 20px; margin: 20px 0;">
+            <div style="font-size: 64px; font-weight: 900;" id="finalScoreText">0.0</div>
+            <div style="font-size: 14px; color: #94a3b8; font-weight: bold;">百分制总分</div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px;">
+            <div class="stat-box"><div style="font-size: 20px; font-weight: 900; color: #10b981;" id="statCorrect">0</div><div>对</div></div>
+            <div class="stat-box"><div style="font-size: 20px; font-weight: 900; color: #ef4444;" id="statWrong">0</div><div>错</div></div>
+            <div class="stat-box"><div style="font-size: 20px; font-weight: 900;" id="statUnanswered">0</div><div>未答</div></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="resetProgress()">🔄 重新开始</button>
+        <button class="btn btn-gray" style="width:100%; margin-top:10px;" onclick="closeCompletionModal()">✖ 继续查看</button>
+    </div>
+</div>
+
+<!-- 3. 使用说明弹窗 (添加了简答题相关的快捷键及答题指南) -->
+<div class="overlay-bg" id="instructionOverlay" onclick="if(event.target===this) closeInstructions()">
+    <div class="modal-card" style="text-align: left;">
+        <h3 style="color: var(--primary);">💡 快捷键与答题指南</h3>
+        <ul style="line-height: 2; font-size: 14px; padding-left: 20px; margin-bottom: 15px;">
+            <li><b>0-9</b>：对应选项 A-J（仅限客观选择题，输入框聚焦时无效）</li>
+            <li><b>Enter</b>：多选题提交答案</li>
+            <li><b>S</b>：收藏 / 移除错题</li>
+            <li><b>← / →</b>：上一题 / 下一题</li>
+            <li><b>空格</b>：下一题（输入框聚焦时无效）</li>
+            <li><b>滑屏</b>：手机端左右滑动切题</li>
+        </ul>
+        <div style="border-top: 1px dashed #cbd5e1; padding-top: 10px; margin-top: 10px;">
+            <h4 style="margin: 0 0 6px 0; color: var(--primary);">📝 简答题使用指南</h4>
+            <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0;">
+                在输入框内键入您的回答并点击<b>“提交答案”</b>后，输入将被锁定。系统会同时展示<b>参考答案与解析</b>。请对照参考答案进行<b>自我评判（点击“🟢 我答对了”或“🔴 我答错了”）</b>，以将答题结果记录至实时得分与错题本。
+            </p>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top: 15px;" onclick="closeInstructions()">知道了</button>
+    </div>
+</div>
+
+<script>
+// ==================================================
+// 题库数据 (预置了四大题型的演示样例，供测试使用)
+// ==================================================
+// ==================================================
+// 题库数据
+// ==================================================
+const questions = [
+  // ==================== 第四章 单选题 ====================
+  {
+    q: "第四章 1. （  ）是一定社会形态、社会性质的集中体现，在一个社会的思想观念体系中处于主导地位，体现着社会制度的阶级属性、社会运行的基本原则和社会发展的基本方向。",
+    options: ["A. 人生观", "B. 法治素质", "C. 核心价值观", "D. 思想道德素质"],
+    answer: 2,
+    exp: "课本P108"
+  },
+  {
+    q: "第四章 2. 社会主义核心价值观，国家层面的价值目标是指（  ）。",
+    options: ["A. 富强、民主、文明、和谐", "B. 自由、平等、公正、法治", "C. 爱国、敬业、诚信、友善", "D. 富强、民主、爱国、法治"],
+    answer: 0,
+    exp: "课本P111"
+  },
+  {
+    q: "第四章 3. 2018年3月，十三届全国人大一次会议通过宪法修正案，把国家（  ）正式写入了宪法，进一步凸显其重大意义。",
+    options: ["A. 倡导社会主义核心价值观", "B. 倡导社会主义核心价值体系", "C. 坚定中国特色社会主义文化自信", "D. 弘扬中国特色社会主义先进文化"],
+    answer: 0,
+    exp: "课本P118"
+  },
+  {
+    q: "第四章 4. 知识是树立社会主义核心价值观的（  ）。",
+    options: ["A. 重要条件", "B. 重要基础", "C. 重要途径", "D. 重要保障"],
+    answer: 1,
+    exp: "课本P134"
+  },
+  {
+    q: "第四章 5. （  ）是社会主义核心价值观的根本特性。",
+    options: ["A. 先进性", "B. 人民性", "C. 真实性", "D. 实践性"],
+    answer: 1,
+    exp: "课本P126"
+  },
+  {
+    q: "第四章 6. 道不可坐论，德不能空谈。于实处用力，做到知行合一，核心价值观才能内化为人们的精神追求，外化为人们的自觉行动。指的是要求做到（  ）。",
+    options: ["A. 勤学", "B. 修德", "C. 明辨", "D. 笃实"],
+    answer: 3,
+    exp: "课本P135"
+  },
+  {
+    q: "第四章 7. “名非天造，必从其实。”任何一种价值观，如果只是停留在口头上，不管多么动听，也终将被历史抛弃。社会主义核心价值观不仅真正地与社会主义制度相契合，与保障人民的根本利益相一致，而且因其（  ）而具有强大的道义力量。",
+    options: ["A. 人民性", "B. 真实性", "C. 先进性", "D. 道义性"],
+    answer: 1,
+    exp: "课本P128"
+  },
+  {
+    q: "第四章 8. 蔡元培曾经说过:“德者，本也。”道德之于个人，之于社会，都具有基础性意义，做人做事第一位的是(  )。",
+    options: ["A. 崇德修身", "B. 志存高远", "C. 明辨是非", "D. 自强自立"],
+    answer: 0,
+    exp: "课本P134"
+  },
+
+  // ==================== 第五章 单选题 ====================
+  {
+    q: "第五章 1. 自古以来，人们在探讨道德起源并提出了种种见解和理论，其中，马克思主义道德起源观是（  ）。",
+    options: ["A. 天意神启论", "B. 先天人性论", "C. 情感欲望论", "D. 生产方式论"],
+    answer: 3,
+    exp: "课本P140"
+  },
+  {
+    q: "第五章 2. 马克思主义道德观认为，道德起源的首要前提是（  ）。",
+    options: ["A. 实践", "B. 自我意识", "C. 社会关系", "D. 劳动"],
+    answer: 2,
+    exp: "课本P140"
+  },
+  {
+    q: "第五章 3. 马克思主义道德观认为，（  ）是道德赖以产生的客观条件。",
+    options: ["A. 社会关系", "B. 自我意识", "C. 生产方式", "D. 生产力"],
+    answer: 0,
+    exp: "课本P140"
+  },
+  {
+    q: "第五章 4. 马克思主义道德观认为，（  ）是道德产生的主观条件。",
+    options: ["A. 人的自我意识", "B. 人类语言", "C. 思维能力", "D. 判断能力"],
+    answer: 0,
+    exp: "课本P140"
+  },
+  {
+    q: "第五章 5. 马克思主义道德观认为，道德在本质上是（  ）的特殊调节方式。",
+    options: ["A. 社会人文关系", "B. 社会利益关系", "C. 社会政治形态", "D. 社会意识形态"],
+    answer: 1,
+    exp: "课本P141"
+  },
+  {
+    q: "第五章 6. 中华传统美德内容丰富、博大精深，“重视整体利益，强调责任奉献”是中华传统美德的基本精神之一。在中华传统道德的诸多论辩中，其核心和本质的论辩是（  ）。",
+    options: ["A. 义利之辨", "B. 理欲之辨", "C. 公私之辨", "D. 生死之辩"],
+    answer: 2,
+    exp: "课本P153"
+  },
+  {
+    q: "第五章 7. 中国革命道德萌芽于（  ），经过长期发展逐渐形成并不断发扬光大。",
+    options: ["A. 土地革命战争前后", "B. 中国共产党成立以后", "C. 五四运动前后", "D. 抗日战争后"],
+    answer: 2,
+    exp: "课本P158"
+  },
+  {
+    q: "第五章 8. 为什么人服务是道德的核心问题，社会主义道德的核心是（  ）。",
+    options: ["A. 为政党服务", "B. 为人民服务", "C. 为军队服务", "D. 为群众服务"],
+    answer: 1,
+    exp: "课本P146"
+  },
+  {
+    q: "第五章 9. 社会主义道德的基本原则是（  ）。",
+    options: ["A. 集体主义", "B. 个人主义", "C. 整体主义", "D. 国家主义"],
+    answer: 0,
+    exp: "课本P149"
+  },
+  {
+    q: "第五章 10. 关于择业与创业观，下列说法错误的是（  ）。",
+    options: [
+      "A. 职业活动是人们谋生的手段，从理想的角度谈不上崇高与否",
+      "B. 择业和创业既要考虑个人的兴趣和意愿，也要充分考虑社会的需要",
+      "C. 大学生树立正确的择业观和创业观，要培养敢于创业的勇气和能力",
+      "D. 任何一名劳动者，只要兢兢业业、精益求精，就一定能够造就闪光的人生"
+    ],
+    answer: 0,
+    exp: "课本P174"
+  },
+  {
+    q: "第五章 11. 家庭是社会的基本细胞，是人生的第一所学校。不论时代发生多大变化，生活格局发生多大变化，都要重视家庭建设，注重家庭、家教、家风。家庭教育涉及很多方面，其中最重要的是（  ）。",
+    options: ["A. 心理健康", "B. 品德教育", "C. 智力开发", "D. 情商培育"],
+    answer: 1,
+    exp: "课本P176"
+  },
+  {
+    q: "第五章 12. 关于恋爱中的道德规范，下列说法有失偏颇的是（  ）。",
+    options: ["A. 尊重人格平等", "B. 自觉承担责任", "C. 财务点滴独立", "D. 文明相亲相爱"],
+    answer: 2,
+    exp: "课本P178"
+  },
+  {
+    q: "第五章 13. 在人类历史上，原始社会的经济关系产生了原始共产主义道德，封建社会的经济关系产生了封建主义道德，社会主义社会的经济关系产生了社会主义道德，这说明（  ）。",
+    options: [
+      "A. 社会道德对社会经济关系具有决定作用",
+      "B. 有什么样的社会经济关系就有什么样的社会道德",
+      "C. 社会经济关系的性质并不决定社会道德体系的性质",
+      "D. 社会道德的发展变化必然引起社会经济关系的发展变化"
+    ],
+    answer: 1,
+    exp: "课本P141"
+  },
+  {
+    q: "第五章 14. 清代林则徐提出“苟利国家生死以，岂因祸福避趋之”体现传统美德基本精神的（  ）。",
+    options: [
+      "A. 重视整体利益，强调责任奉献",
+      "B. 推崇“仁爱”原则，注重以和为贵",
+      "C. 提倡人伦价值，重视道德义务",
+      "D. 追求精神境界 向往理想人格"
+    ],
+    answer: 0,
+    exp: "课本P153"
+  },
+  {
+    q: "第五章 15. 孟子强调：“亲亲而仁民，仁民而爱物”，强调中华传统美德基本精神中（  ）。",
+    options: [
+      "A. 重视整体利益，强调责任奉献",
+      "B. 推崇“仁爱”原则，注重以和为贵",
+      "C. 提倡人伦价值，重视道德义务",
+      "D. 强调道德修养，注重道德践履"
+    ],
+    answer: 1,
+    exp: "课本P153"
+  },
+  {
+    q: "第五章 16. 道德建设的核心体现着社会道德建设的根本性质和发展方向，道德建设的原则体现着社会道德建设的根本要求。下列关于我国社会主义道德建设的核心和原则的说法中，正确的是（  ）。",
+    options: [
+      "A. 以爱国主义为核心，以改革创新为原则",
+      "B. 以公平正义为核心，以团结互助为原则",
+      "C. 以诚实守信为核心，以知荣明耻为原则",
+      "D. 以为人民服务为核心，以集体主义为原则"
+    ],
+    answer: 3,
+    exp: "课本P146/149"
+  },
+  {
+    q: "第五章 17. 在我国，社会主义集体主义道德原则具有多层次的道德要求，其中最高层次的道德要求是（  ）。",
+    options: [
+      "A. 无私奉献、一心为公",
+      "B. 损公肥私、损人利己",
+      "C. 先公后私、先人后己",
+      "D. 公私兼顾、不损公肥私"
+    ],
+    answer: 0,
+    exp: "课本P151"
+  },
+  {
+    q: "第五章 18. 为调整和规范人类社会生活三大领域，相应分别形成了（  ）。",
+    options: [
+      "A. 生活道德、职业道德、家庭道德",
+      "B. 生活道德、职业道德、社会公德",
+      "C. 社会公德、生活道德、工作道德",
+      "D. 社会公德、职业道德、家庭美德"
+    ],
+    answer: 3,
+    exp: "课本P165"
+  },
+  {
+    q: "第五章 19. 公民在社会交往和社会公共生活中应该遵循的道德准则是（  ）。",
+    options: ["A. 社会公德", "B. 职业道德", "C. 家庭道德", "D. 生活道德"],
+    answer: 0,
+    exp: "课本P166"
+  },
+
+  // ==================== 第六章 单选题 ====================
+  {
+    q: "第六章 1. 法律的运行主要包括法律制定、法律执行、法律适用、法律遵守等环节。其中法律制定是指有（  ）的国家机关，依照法定职权和程序制定规范性法律文件的活动。",
+    options: ["A. 行政权", "B. 司法权", "C. 立法权", "D. 执法权"],
+    answer: 2,
+    exp: "P196"
+  },
+  {
+    q: "第六章 2. 下列选项中，属于公有制法的是（  ）。",
+    options: ["A. 奴隶制法律", "B. 封建制法律", "C. 资本主义法律", "D. 社会主义法律"],
+    answer: 3,
+    exp: "P191"
+  },
+  {
+    q: "第六章 3. 我国目前形成了以（  ）为核心的中国特色社会主义法律体系。",
+    options: ["A. 民法", "B. 行政法", "C. 刑法", "D. 宪法"],
+    answer: 3,
+    exp: "P193"
+  },
+  {
+    q: "第六章 4. （  ）是法律规范区别于其他社会规范的一个重要特征。",
+    options: ["A. 阶级性", "B. 国家强制性", "C. 可实施性", "D. 规范性"],
+    answer: 1,
+    exp: "P191"
+  },
+  {
+    q: "第六章 5. 法律运行的起始性和关键性环节是（  ）。",
+    options: ["A. 法律遵守", "B. 法律适用", "C. 法律制定", "D. 法律执行"],
+    answer: 2,
+    exp: "P196"
+  },
+  {
+    q: "第六章 6. 严密的（  ），是指以规范和约束公权力为重点建立的有效的法治化权力监督网络。",
+    options: ["A. 法治保障体系", "B. 法律规范体系", "C. 法治实施体系", "D. 法治监督体系"],
+    answer: 3,
+    exp: "P211"
+  },
+  {
+    q: "第六章 7. （  ）是中国特色社会主义最本质的特征，是社会主义法治最根本的保证。",
+    options: ["A. 公平正义", "B. 依法治国", "C. 党的领导", "D. 人民当家作主"],
+    answer: 2,
+    exp: "P204"
+  },
+  {
+    q: "第六章 8. （  ）是全面依法治国的关键。",
+    options: ["A. 科学立法", "B. 全民守法", "C. 公正司法", "D. 严格执法"],
+    answer: 3,
+    exp: "P214"
+  },
+  {
+    q: "第六章 9. 以法治价值和法治精神为导向，运用法律原则，法律规则、法律方法思考和处理问题的思维模式是（  ）。",
+    options: ["A. 法律意识", "B. 法治理念", "C. 法治思维", "D. 法治观念"],
+    answer: 2,
+    exp: "P230"
+  },
+  {
+    q: "第六章 10. （  ）是法治的生命线，是司法活动最高的价值追求。",
+    options: ["A. 民主", "B. 权利", "C. 平等", "D. 公正"],
+    answer: 3,
+    exp: "P216"
+  },
+  {
+    q: "第六章 11. 权利保障的前提和基础是（  ）。",
+    options: ["A. 行政保护", "B. 宪法保障", "C. 司法保障", "D. 立法保障"],
+    answer: 1,
+    exp: "P233-234"
+  },
+  {
+    q: "第六章 12. （  ）是权利保障的重要条件。",
+    options: ["A. 行政保护", "B. 宪法保障", "C. 立法保障", "D. 司法保障"],
+    answer: 2,
+    exp: "P234"
+  },
+  {
+    q: "第六章 13. （  ）是权利保障的最后防线。",
+    options: ["A. 司法保障", "B. 立法保障", "C. 宪法保障", "D. 行政保护"],
+    answer: 0,
+    exp: "P234"
+  },
+  {
+    q: "第六章 14. （  ）是社会主义法律的基本属性，是社会主义法治的基本要求。",
+    options: ["A. 权利", "B. 自由", "C. 民主", "D. 平等"],
+    answer: 3,
+    exp: "P206"
+  },
+  {
+    q: "第六章 15. 法律适用是指（  ）依照法定职权和程序适用法律处理案件的专门活动。",
+    options: [
+      "A. 国家行政机关及其公职人员",
+      "B. 国家司法机关及其公职人员",
+      "C. 社会组织和公民个人",
+      "D. 国家机关及其公职人员"
+    ],
+    answer: 1,
+    exp: "P197"
+  },
+  {
+    q: "第六章 16. 下列哪一项不是我国宪法赋予公民的权利？",
+    options: ["A. 选举权", "B. 宗教信仰权", "C. 人身自由权", "D. 纳税权"],
+    answer: 3,
+    exp: "P238-239"
+  },
+  {
+    q: "第六章 17. “立善法于天下，则天下治；立善法于一国，则一国治。”指的是（  ）。",
+    options: ["A. 科学立法", "B. 严格执法", "C. 公正司法", "D. 全民守法"],
+    answer: 0,
+    exp: "P214"
+  },
+  {
+    q: "第六章 18. 关于法律面前人人平等，下列说法不准确的是（  ）。",
+    options: [
+      "A. 平等享受公民权利、平等履行公民义务",
+      "B. 一切违反宪法法律的行为都必须平等予以追究",
+      "C. 只要是公民有诉求，就应当得到平等对待",
+      "D. 只要是合法权益，就应当依法得到平等保护"
+    ],
+    answer: 2,
+    exp: "P206-207"
+  },
+  {
+    q: "第六章 19. 关于权力制约，下列表述不准确的是（  ）。",
+    options: [
+      "A. 权力由法定，即法无授权不可为，是指国家机关的职权必须来自法律明确的授予",
+      "B. 有权必有责，是指国家机关在获得权力的同时必须承担相应的职责和责任",
+      "C. 用权受监督，是指国家权力的运行和行使接受法律监督部门的监督",
+      "D. 违法受追究，是指国家工作人员违法行使权力必须受到法律的追究和制裁"
+    ],
+    answer: 2,
+    exp: "P232-233"
+  },
+  {
+    q: "第六章 20. “要用实际行动捍卫法律尊严，保障法律实施”是（  ）的基本要求。",
+    options: ["A. 信仰法律", "B. 遵守法律", "C. 服从法律", "D. 维护法律"],
+    answer: 1,
+    exp: "P247"
+  },
+
+  // ==================== 第四章 判断题 ====================
+  {
+    q: "第四章判断 1. 文化软实力的灵魂是核心价值观。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P120"
+  },
+  {
+    q: "第四章判断 2. 社会主义核心价值体系内容包括中国特色社会主义共同理想。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P110"
+  },
+  {
+    q: "第四章判断 3. 诚信是社会主义核心价值观在社会层面上的内容。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "课本P115"
+  },
+  {
+    q: "第四章判断 4. 一个国家的文化软实力，从根本上说，取决于其核心价值观的生命力、凝聚力、感召力。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P120"
+  },
+  {
+    q: "第四章判断 5. 人民至上是社会主义核心价值观鲜明的价值立场。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P126"
+  },
+  {
+    q: "第四章判断 6. 普世价值就是全人类共同价值。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "课本P131"
+  },
+  {
+    q: "第四章判断 7. 只有在社会主义社会，人民才有可能实现真正平等。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P114"
+  },
+  {
+    q: "第四章判断 8. 核心价值观，其实就是一种德，既是个人的德，也是一种大德，就是国家的德、社会的德。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P109"
+  },
+  {
+    q: "第四章判断 9. 社会主义核心价值观是社会主义核心价值体系的精神内核，体现了社会主义核心价值体系的根本性质和基本特征。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P110"
+  },
+  {
+    q: "第四章判断 10. 全过程人民民主，是最广泛、最真实、最管用的社会主义民主。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P112"
+  },
+  {
+    q: "第四章判断 11. 自由、平等、公正、法治是社会主义核心价值观在国家层面的价值要求。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "课本P113"
+  },
+  {
+    q: "第四章判断 12. 社会主义核心价值观与以往价值观的一个重要区别在于其人民性。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P128"
+  },
+  {
+    q: "第四章判断 13. 青年的价值取向不会影响未来整个社会的价值取向。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "课本 P133"
+  },
+
+  // ==================== 第五章 判断题 ====================
+  {
+    q: "第五章判断 1. 道德的产生、发展和变化，和社会经济关系没有关系。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "课本P141"
+  },
+  {
+    q: "第五章判断 2. 树立社会新风，建立新型人际关系是中国革命道德的内容之一。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P161"
+  },
+  {
+    q: "第五章判断 3. 爱岗敬业是社会主义职业道德中最高层次的要求，体现了社会主义职业道德的最高目标指向。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "课本P173"
+  },
+  {
+    q: "第五章判断 4. 积善之家，必有余庆；积不善之家，必有余殃。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本177"
+  },
+  {
+    q: "第五章判断 5. 在无人知晓、没有外在监督的情况下，坚守自己的道德信念，自觉按道德要求行事，不因无人监督而恣意妄为的道德修养方法是省察克治。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "课本P183"
+  },
+  {
+    q: "第五章判断 6. 就业是最大的民生。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P174"
+  },
+  {
+    q: "第五章判断 7. 人类是劳动创造的，社会是劳动创造的。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P140"
+  },
+  {
+    q: "第五章判断 8. 事业的成功，往往与美好的爱情和美满的婚姻家庭密切相关。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本175"
+  },
+  {
+    q: "第五章判断 9. 中国革命道德从一开始就强调要为群众服务、为大众谋幸福、为人民利益献身，并认为这是对一切革命人士和先进分子的要求。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本P160"
+  },
+  {
+    q: "第五章判断 10. “国无德不兴，人无德不立”，生动表达了道德的作用。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本143"
+  },
+  {
+    q: "第五章判断 11. 用中华传统美德滋养社会主义道德建设。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本157页"
+  },
+  {
+    q: "第五章判断 12. 道德是社会利益关系的特殊调节方式。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本141页"
+  },
+  {
+    q: "第五章判断 13. 集体主义重视和保障个人的正当利益。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本150页"
+  },
+  {
+    q: "第五章判断 14. 公共生活不需要公共秩序。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "课本167页"
+  },
+  {
+    q: "第五章判断 15. 社会文明状况是社会风尚的重要体现。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "课本187页"
+  },
+
+  // ==================== 第六章 判断题 ====================
+  {
+    q: "第六章判断 1. 法律所体现的统治阶级意志具有整体性，不是统治阶级内部个别人的意志，所以统治阶级的成员也必须遵守法律。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "P190"
+  },
+  {
+    q: "第六章判断 2. 我国公民的社会经济权利主要包括选举权利、表达权利、民主管理权和监督权。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "P240"
+  },
+  {
+    q: "第六章判断 3. 科学立法是全面依法治国的前提。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "P214"
+  },
+  {
+    q: "第六章判断 4. 党的十九大以来，习近平高度重视全面依法治国，创造性提出了一系列全面依法治国新理念新思想新战略，形成了习近平法治思想。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "P199"
+  },
+  {
+    q: "第六章判断 5. 构建完备的法律规范体系，是中国特色社会主义法治体系的重点。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "P210"
+  },
+  {
+    q: "第六章判断 6. 在法治国家，不存在只享受权利的主体，也不存在只承担义务的主体。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "P237"
+  },
+  {
+    q: "第六章判断 7. 法治思维奉个人的意志为最高权威，当法律的权威与个人的权威发生矛盾时，强调服从个人而非服从法律的权威。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "P231"
+  },
+  {
+    q: "第六章判断 8. 党的领导是中国特色社会主义最本质的特征，是社会主义法治最根本的保证。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "P204"
+  },
+  {
+    q: "第六章判断 9. 法安天下，德润人心。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "2016年12月9日，中共中央政治局就我国历史上的法治和德治进行第三十七次集体学习，习近平。"
+  },
+  {
+    q: "第六章判断 10. 法律是成文的道德，道德是内心的法律。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "2016年12月9日，中共中央政治局就我国历史上的法治和德治进行第三十七次集体学习，习近平。"
+  },
+  {
+    q: "第六章判断 11. 法律随着私有制、阶级和国家的产生而产生，也将随着私有制、阶级 and 国家的消亡而消亡。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "P191"
+  },
+  {
+    q: "第六章判断 12. 我国社会主义法律体现了党的主张和人民意志的统一，具有科学性和先进性，是中国特色社会主义建设的重要保障。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "P194-195"
+  },
+  {
+    q: "第六章判断 13. 在我国，司法机关是指公安机关、人民检察院、人民法院三家机构。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "P197"
+  },
+  {
+    q: "第六章判断 14. 1982年宪法是中华人民共和国第一部宪法，为改革开放和社会主义现代化建设提供了有力法制保障。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 1,
+    exp: "P218"
+  },
+  {
+    q: "第六章判断 15. 宪法的生命在于实施，宪法的权威也在于实施。",
+    options: ["A. 正确", "B. 错误"],
+    answer: 0,
+    exp: "P226"
+  },
+
+  // ==================== 简答题 ====================
+  {
+    q: "简答：第四章：社会主义核心价值观的基本内容是什么？",
+    options: [],
+    answer: "富强、民主、文明、和谐，自由、平等、公正、法治，爱国、敬业、诚信、友善。",
+    exp: "课本P110"
+  },
+  {
+    q: "简答：第四章：作为大学生，把社会主义核心价值观落细落小落实要落实到哪些环节？",
+    options: [],
+    answer: "笃实，勤学，修德，明辨",
+    exp: "课本P134"
+  },
+  {
+    q: "简答：第五章：道德的力量是无穷的，国无德不兴，人无德不立。结合实际，谈谈道德的作用。",
+    options: [],
+    answer: "①道德能够影响经济基础的形成、巩固和发展。②道德对其他社会意识形态的存在和发展有着重大的影响。③道德是影响社会生产力发展的一种重要的精神力量。④道德通过调整人们之间的关系维护社会秩序和稳定。⑤道德是提高人的精神境界、促进人的自我完善、推动人的全面发展的内在动力。",
+    exp: "P142-144"
+  },
+  {
+    q: "简答：第五章：社会主义道德是人类道德发展史上一种崭新类型的道德，谈谈社会主义道德为什么要以为人民服务为核心、以集体主义为原则。",
+    options: [],
+    answer: "社会主义道德建设之所以要以为人民服务为核心、以集体主义为原则，是由我国社会主义制度的本质属性、经济基础、政治体制和文化导向共同决定的。",
+    exp: "P146--149"
+  },
+  {
+    q: "简答：第五章：中华传统美德是社会主义道德建设的源水活头，中国革命道德是社会主义道德的红色基因。结合实际，谈谈新时代大学生如何传承中华传统美德和弘扬中国革命道德。",
+    options: [],
+    answer: "1. 深入学习与理解；2. 践行核心价值观；3. 参与志愿服务；4. 弘扬爱国主义；5. 勇于担当责任；6. 批判性继承。",
+    exp: "P156,157,163"
+  },
+  {
+    q: "简答：第六章：谈谈我国宪法的地位和基本原则。",
+    options: [],
+    answer: "（请参考课本P222-226相关内容）",
+    exp: "P222-226"
+  },
+  {
+    q: "简答：第六章：试述中国特色社会主义法治体系的主要内容。",
+    options: [],
+    answer: "（1）完备的法律规范体系；（2）高效的法治实施体系；（3）严密的法治监督体系；（4）有力的法治保障体系；（5）完善的党内法规体系。",
+    exp: "P210"
+  },
+  {
+    q: "简答：第六章：宪法规定了哪些权利与义务？",
+    options: [],
+    answer: "权利：1.政治权 2.宗教信仰权 3.人身权 4.社会经济权 5.文化教育权；义务：1.维护国家统一和民族团结的义务 2.遵守宪法和法律的义务 3.维护祖国安全、荣誉和利益的义务 4.依法服兵役的义务 5.依法纳税的义务",
+    exp: "P238、P243-246"
+  },
+  {
+    q: "简答：第六章：谈谈大学生如何提升法治素养？",
+    options: [],
+    answer: "1.尊重法律权威；2.学习法律知识；3.养成守法习惯；4.提高用法能力",
+    exp: "P247-250"
+  }
+];
+// ==================================================
+// 激励语库 (需求2)
+// ==================================================
+const sayArray = [
+    "革命尚未成功，同志仍需努力！",
+    "乾坤未定，你我皆是黑马！",
+    "不积跬步，无以至千里。",
+    "加油，未来的专家就是你！",
+    "每一次错题，都是通往满分的阶梯。",
+    "纵有疾风起，人生不言弃。",
+    "再微小的进步，也是对自己的奖赏。",
+    "星光不问赶路人，时光不负有心人。"
+];
+
+// ==================================================
+// 状态管理
+// ==================================================
+let answeredState = new Array(questions.length).fill(false);
+let correctState = new Array(questions.length).fill(false);
+// 记录用户选择（客观题记录选项索引，简答题记录输入文本）
+let userChoices = new Array(questions.length).fill(null);
+
+let filterSource = 'all'; 
+let filterType = 'single'; 
+let displayList = []; 
+let currentDisplayIndex = 0;
+let currentRealIndex = 0;
+let isAnswerLocked = false;
+let earlySubmitted = false;
+let isReciteMode = false;
+let isSidebarOpen = false;
+
+const STORAGE_KEY = 'digital_twin_wrong_book';
+const PROGRESS_KEY = 'digital_twin_progress_save';
+
+// 初始化加载
+window.onload = () => {
+    loadProgress();
+    updateDisplayList();
+    renderNav();
+    if(displayList.length > 0) loadQuestion(currentRealIndex);
+    if(window.innerWidth > 768) isSidebarOpen = true;
+};
+
+// 存储逻辑
+function loadWrongBook() { try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) return new Set(JSON.parse(raw)); } catch(e){} return new Set(); }
+function saveWrongBook(wbSet) { localStorage.setItem(STORAGE_KEY, JSON.stringify([...wbSet])); }
+let wrongBook = loadWrongBook();
+
+function saveProgress() {
+    const data = { answeredState, correctState, userChoices, earlySubmitted, currentRealIndex, filterSource, filterType };
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(data));
+}
+function loadProgress() {
+    try {
+        const raw = localStorage.getItem(PROGRESS_KEY);
+        if (raw) {
+            const d = JSON.parse(raw);
+            answeredState = d.answeredState;
+            correctState = d.correctState;
+            userChoices = d.userChoices || new Array(questions.length).fill(null);
+            earlySubmitted = d.earlySubmitted;
+            filterSource = d.filterSource || 'all';
+            filterType = d.filterType || 'single';
+            currentRealIndex = d.currentRealIndex || 0;
+        }
+    } catch(e){}
+}
+
+// UI 控制逻辑
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mask = document.getElementById('sidebarMask');
+    isSidebarOpen = !isSidebarOpen;
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('show-mobile', isSidebarOpen);
+        mask.classList.toggle('show', isSidebarOpen);
+    } else {
+        sidebar.classList.toggle('hide-pc', !isSidebarOpen);
+    }
+}
+function showInstructions() { document.getElementById('instructionOverlay').classList.add('show'); }
+function closeInstructions() { document.getElementById('instructionOverlay').classList.remove('show'); }
+
+// 题目类型智能判定
+function getQuestionType(q) {
+    if (!q.options || q.options.length === 0) return 'short'; // 无选项则为简答题
+    if (Array.isArray(q.answer)) return 'multi';
+    if (q.options.length === 2 && (q.options[0].includes('对') || q.options[0].includes('正确'))) return 'judge';
+    return 'single';
+}
+
+function updateDisplayList() {
+    let sourceList = filterSource === 'all' ? questions.map((_, i) => i) : [...wrongBook].sort((a,b)=>a-b);
+    let singles = [], multis = [], judges = [], shorts = [];
+    sourceList.forEach(idx => {
+        const t = getQuestionType(questions[idx]);
+        if (t === 'single') singles.push(idx);
+        else if (t === 'multi') multis.push(idx);
+        else if (t === 'judge') judges.push(idx);
+        else shorts.push(idx);
+    });
+    document.getElementById('count-single').innerText = singles.length;
+    document.getElementById('count-multi').innerText = multis.length;
+    document.getElementById('count-judge').innerText = judges.length;
+    document.getElementById('count-short').innerText = shorts.length;
+
+    if (filterType === 'single') displayList = singles;
+    else if (filterType === 'multi') displayList = multis;
+    else if (filterType === 'judge') displayList = judges;
+    else displayList = shorts;
+
+    if (!displayList.includes(currentRealIndex) && displayList.length > 0) {
+        currentRealIndex = displayList[0];
+        currentDisplayIndex = 0;
+    } else {
+        currentDisplayIndex = displayList.indexOf(currentRealIndex);
+    }
+}
+
+function renderNav() {
+    const gridContainer = document.getElementById('navGrid');
+    gridContainer.innerHTML = '';
+    if (displayList.length === 0) {
+        gridContainer.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;">暂无题目</div>';
+    } else {
+        const gridEl = document.createElement('div');
+        gridEl.className = 'grid';
+        displayList.forEach(realIdx => {
+            const div = document.createElement('div');
+            div.className = 'grid-item';
+            if (realIdx === currentRealIndex) div.classList.add('active');
+            if (answeredState[realIdx]) div.classList.add('done');
+            if (wrongBook.has(realIdx)) div.classList.add('in-wrongbook');
+            div.innerText = realIdx + 1;
+            div.onclick = () => { currentDisplayIndex = displayList.indexOf(realIdx); loadQuestion(realIdx); if(window.innerWidth<=768) toggleSidebar(); };
+            gridEl.appendChild(div);
+        });
+        gridContainer.appendChild(gridEl);
+    }
+    
+    document.getElementById('totalCount').innerText = questions.length;
+    document.getElementById('wrongCount').innerText = wrongBook.size;
+    document.getElementById('btnSource-all').classList.toggle('active-filter', filterSource === 'all');
+    document.getElementById('btnSource-wrongbook').classList.toggle('active-filter', filterSource === 'wrongbook');
+    document.querySelectorAll('.type-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + filterType).classList.add('active');
+    
+    const correctCount = correctState.filter(Boolean).length;
+    const answeredCount = answeredState.filter(Boolean).length;
+    const score = Math.round((correctCount / questions.length) * 1000) / 10;
+    document.getElementById('realtimeScore').innerText = score.toFixed(1);
+    document.getElementById('progressText').innerText = `${answeredCount} / ${questions.length}`;
+    document.getElementById('progressBarInner').style.width = (answeredCount / questions.length * 100) + '%';
+}
+
+// ==================================================
+// 核心加载逻辑：整合了简答题渲染与自评交互
+// ==================================================
+function loadQuestion(realIdx) {
+    currentRealIndex = realIdx;
+    isAnswerLocked = answeredState[realIdx];
+    const q = questions[realIdx];
+    const type = getQuestionType(q);
+    const isMulti = type === 'multi';
+    const isShort = type === 'short';
+
+    // 状态分类标签
+    let typeText = '🔵 单选题';
+    if (isMulti) typeText = '🔶 多选题';
+    else if (type === 'judge') typeText = '📝 判断题';
+    else if (isShort) typeText = '✍️ 简答题';
+    document.getElementById('typeLabel').innerText = typeText;
+
+    document.getElementById('questionText').innerText = (realIdx + 1) + ". " + q.q;
+    document.getElementById('explanationBox').style.display = (isAnswerLocked || isReciteMode) ? 'block' : 'none';
+    document.getElementById('multiSelectHint').style.display = (isMulti && !isAnswerLocked && !isReciteMode) ? 'block' : 'none';
+    
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    
+    if (isShort) {
+        // ========== 简答题渲染逻辑 ==========
+        if (isReciteMode) {
+            container.innerHTML = `
+                <div class="short-answer-container">
+                    <textarea readonly placeholder="背题模式下可直接查看答案">【参考答案】\n${q.answer}</textarea>
+                </div>
+            `;
+        } else if (isAnswerLocked) {
+            const userText = userChoices[realIdx] || '(您未填写任何回答)';
+            container.innerHTML = `
+                <div class="user-answer-box">
+                    <div style="font-weight: bold; margin-bottom: 6px; font-size: 14px; color: #64748b;">您的回答：</div>
+                    <div style="font-size: 15px; white-space: pre-wrap; color: #334155;">${userText}</div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="short-answer-container">
+                    <textarea id="shortAnswerInput" placeholder="在此键入您的回答..."></textarea>
+                </div>
+            `;
+        }
+    } else {
+        // ========== 选择题渲染逻辑 ==========
+        q.options.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            div.innerText = opt;
+            
+            if (isReciteMode) {
+                const isRight = isMulti ? q.answer.includes(i) : q.answer === i;
+                if (isRight) div.classList.add('correct');
+            } else if (isAnswerLocked) {
+                const isRight = isMulti ? q.answer.includes(i) : q.answer === i;
+                const myPick = userChoices[realIdx] || [];
+                
+                if (isRight) div.classList.add('correct'); 
+                if (myPick.includes(i) && !isRight) div.classList.add('wrong'); 
+            } else {
+                div.onclick = () => {
+                    if (isMulti) div.classList.toggle('selected');
+                    else {
+                        Array.from(container.children).forEach(el => el.classList.remove('selected'));
+                        div.classList.add('selected');
+                        checkAnswer();
+                    }
+                };
+            }
+            container.appendChild(div);
+        });
+    }
+
+    // 解析面板显隐及内容装载
+    if (isAnswerLocked || isReciteMode) {
+        let resultTitleText = isReciteMode ? "📖 背题模式解析" : (correctState[realIdx] ? "🎉 自评 / 系统：回答正确" : "❌ 自评 / 系统：回答错误");
+        document.getElementById('resultTitle').innerText = resultTitleText;
+
+        if (isShort) {
+            // 简答题提供标准答案与自评操作按钮
+            let expHtml = `
+                <div style="margin-bottom:12px;"><b>标准参考答案：</b></div>
+                <div style="background:#fff; border-radius:8px; padding:12px; border:1px solid #e2e8f0; white-space:pre-wrap; margin-bottom:16px; color:#1e293b;">${q.answer}</div>
+                <div style="margin-bottom:12px;"><b>解析：</b>${q.exp}</div>
+            `;
+            // 背题模式不展示自评按钮
+            if (!isReciteMode) {
+                expHtml += `
+                    <div class="self-grade-container">
+                        <div style="font-weight: bold; font-size: 14px; color: #475569; margin-bottom: 10px;">请对比标准答案进行自我判定：</div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn" style="flex:1; background: var(--success);" onclick="selfGrade(true)">🟢 我答对了</button>
+                            <button class="btn" style="flex:1; background: var(--danger);" onclick="selfGrade(false)">🔴 我答错了</button>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('expText').innerHTML = expHtml;
+        } else {
+            // 客观选择题使用常规文本形式
+            document.getElementById('expText').innerText = q.exp;
+        }
+    }
+    updateStarButton();
+    renderNav();
+    saveProgress();
+}
+
+function checkAnswer() {
+    if (isAnswerLocked) return;
+    const q = questions[currentRealIndex];
+    const type = getQuestionType(q);
+    const isMulti = type === 'multi';
+
+    if (type === 'short') {
+        // ========== 简答题提交判定 ==========
+        const inputVal = document.getElementById('shortAnswerInput').value.trim();
+        if (!inputVal) { alert('请输入您的回答内容！'); return; }
+        answeredState[currentRealIndex] = true;
+        userChoices[currentRealIndex] = inputVal;
+        
+        // 简答题默认暂记为错误，等待用户自评后动态纠偏
+        correctState[currentRealIndex] = false;
+        wrongBook.add(currentRealIndex);
+        saveWrongBook(wrongBook);
+        loadQuestion(currentRealIndex);
+        if (!earlySubmitted && answeredState.every(v => v)) showScoreModal(false);
+        return;
+    }
+
+    // ========== 客观题提交判定 ==========
+    const options = document.querySelectorAll('.option');
+    const selected = [];
+    options.forEach((opt, index) => { if (opt.classList.contains('selected')) selected.push(index); });
+
+    if (isMulti && selected.length === 0) { alert('请先选择答案！'); return; }
+
+    const isCorrect = isMulti ? 
+        (JSON.stringify(selected.sort()) === JSON.stringify([...q.answer].sort())) : 
+        (selected[0] === q.answer);
+
+    answeredState[currentRealIndex] = true;
+    correctState[currentRealIndex] = isCorrect;
+    userChoices[currentRealIndex] = selected; 
+    
+    if (!isCorrect) {
+        wrongBook.add(currentRealIndex);
+    } else {
+        wrongBook.delete(currentRealIndex);
+    }
+    saveWrongBook(wrongBook);
+    loadQuestion(currentRealIndex);
+    if (!earlySubmitted && answeredState.every(v => v)) showScoreModal(false);
+}
+
+// ========== 简答题自评处理逻辑 ==========
+function selfGrade(isCorrect) {
+    correctState[currentRealIndex] = isCorrect;
+    if (isCorrect) {
+        wrongBook.delete(currentRealIndex);
+    } else {
+        wrongBook.add(currentRealIndex);
+    }
+    saveWrongBook(wrongBook);
+    loadQuestion(currentRealIndex);
+}
+
+// 导出与范围控制 (支持了简答题非 undefined 格式输出)
+function openExportModal() { document.getElementById('exportOverlay').classList.add('show'); }
+function closeExportModal() { document.getElementById('exportOverlay').classList.remove('show'); }
+function toggleExportRange() {
+    const val = document.getElementById('exportScope').value;
+    document.getElementById('customRangeGroup').style.display = (val === 'custom') ? 'block' : 'none';
+}
+
+function handleExport() {
+    const scope = document.getElementById('exportScope').value;
+    let list = [];
+    if (scope === 'all') list = questions.map((_,i)=>i);
+    else if (scope === 'wrongbook') list = [...wrongBook].sort((a,b)=>a-b);
+    else {
+        const input = document.getElementById('customRangeInput').value;
+        const match = input.match(/^(\d+)-(\d+)$/);
+        if(!match) { alert('格式错误，请按 1-100 格式输入'); return; }
+        for(let i=parseInt(match[1])-1; i<parseInt(match[2]); i++) { if(questions[i]) list.push(i); }
+    }
+    if (list.length === 0) { alert('所选范围内没有题目'); return; }
+
+    let text = "=== 题库导出资料 ===\n\n";
+    list.forEach(idx => {
+        const q = questions[idx];
+        const type = getQuestionType(q);
+        const typeStr = type === 'single' ? '单选题' : type === 'multi' ? '多选题' : type === 'judge' ? '判断题' : '简答题';
+        
+        text += `[${idx+1}] 【${typeStr}】 ${q.q}\n`;
+        if (type !== 'short') {
+            text += `选项：${q.options.join('  ')}\n`;
+            text += `正确答案：${Array.isArray(q.answer) ? q.answer.map(a => q.options[a]).join(', ') : q.options[q.answer]}\n`;
+        } else {
+            text += `参考答案：${q.answer}\n`;
+        }
+        text += `解析：${q.exp}\n\n`;
+    });
+    const blob = new Blob([text], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `题库导出_${new Date().getTime()}.txt`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    closeExportModal();
+}
+
+// 结算
+function showScoreModal(isEarly) {
+    const correctCount = correctState.filter(Boolean).length;
+    const answeredCount = answeredState.filter(Boolean).length;
+    const score = Math.round((correctCount / questions.length) * 1000) / 10;
+    
+    document.getElementById('encouragementText').innerText = sayArray[Math.floor(Math.random() * sayArray.length)];
+    document.getElementById('finalScoreText').innerText = score.toFixed(1);
+    document.getElementById('statCorrect').innerText = correctCount;
+    document.getElementById('statWrong').innerText = answeredCount - correctCount;
+    document.getElementById('statUnanswered').innerText = questions.length - answeredCount;
+    document.getElementById('completionOverlay').classList.add('show');
+}
+
+// 其他交互逻辑
+function toggleStar() {
+    if (wrongBook.has(currentRealIndex)) wrongBook.delete(currentRealIndex);
+    else wrongBook.add(currentRealIndex);
+    saveWrongBook(wrongBook); updateStarButton(); renderNav();
+}
+function updateStarButton() {
+    const btn = document.getElementById('starBtn');
+    btn.innerText = wrongBook.has(currentRealIndex) ? '⭐' : '☆';
+    btn.classList.toggle('starred', wrongBook.has(currentRealIndex));
+}
+function setSourceFilter(s) { filterSource = s; updateDisplayList(); renderNav(); if(displayList.length>0) loadQuestion(displayList[0]); }
+function setTypeFilter(t) { filterType = t; updateDisplayList(); renderNav(); if(displayList.length>0) loadQuestion(displayList[0]); }
+function prevQuestion() { if(currentDisplayIndex > 0) { currentDisplayIndex--; loadQuestion(displayList[currentDisplayIndex]); } }
+function nextQuestion() { if(currentDisplayIndex < displayList.length-1) { currentDisplayIndex++; loadQuestion(displayList[currentDisplayIndex]); } }
+function toggleReciteMode() { isReciteMode = !isReciteMode; document.getElementById('modeToggleBtn').innerText = isReciteMode ? "📝 退出背题模式" : "📖 开启背题模式"; loadQuestion(currentRealIndex); }
+function submitEarly() { if(confirm('确认提前交卷结算吗？')) { earlySubmitted = true; showScoreModal(true); } }
+function closeCompletionModal() { document.getElementById('completionOverlay').classList.remove('show'); }
+function showExplanationDirectly() { checkAnswer(); }
+function resetProgress() { if(confirm('确认重置进度？')) { answeredState.fill(false); correctState.fill(false); userChoices.fill(null); earlySubmitted = false; saveProgress(); location.reload(); } }
+function clearWrongBook() { if(confirm('清空错题本？')) { wrongBook.clear(); saveWrongBook(wrongBook); updateDisplayList(); renderNav(); } }
+
+// 快捷键监听 (添加了对 input 和 textarea 的输入隔离判定)
+document.addEventListener('keydown', (e) => {
+    // 聚焦输入状态下不触发应用级快捷键，以保障正常打字
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    
+    if (e.key === 'ArrowLeft') prevQuestion();
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextQuestion(); }
+    if (e.key.toLowerCase() === 's') toggleStar();
+    if (e.key === 'Enter' && !isAnswerLocked) { if(Array.isArray(questions[currentRealIndex].answer)) checkAnswer(); }
+    if (e.key >= '0' && e.key <= '9') {
+        const idx = parseInt(e.key);
+        const opts = document.querySelectorAll('.option');
+        if (opts[idx] && !isAnswerLocked) {
+            if (Array.isArray(questions[currentRealIndex].answer)) opts[idx].classList.toggle('selected');
+            else { opts.forEach(o => o.classList.remove('selected')); opts[idx].classList.add('selected'); checkAnswer(); }
+        }
+    }
+});
+
+// 手势触屏监听
+let touchStartX = 0;
+document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX, {passive:true});
+document.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 100) diff > 0 ? prevQuestion() : nextQuestion();
+}, {passive:true});
+</script>
+</body>
+</html>
